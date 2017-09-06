@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "Azure_Network_Deploy_PAN_v4-0", "Azure_Network_Deploy_PAN_v4-0\Azure_Network_Deploy_PAN_v4-0.deployproj", "{6F95B3A7-D7BE-4A95-93F7-6FA3D48E1DBE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6F95B3A7-D7BE-4A95-93F7-6FA3D48E1DBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F95B3A7-D7BE-4A95-93F7-6FA3D48E1DBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F95B3A7-D7BE-4A95-93F7-6FA3D48E1DBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F95B3A7-D7BE-4A95-93F7-6FA3D48E1DBE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

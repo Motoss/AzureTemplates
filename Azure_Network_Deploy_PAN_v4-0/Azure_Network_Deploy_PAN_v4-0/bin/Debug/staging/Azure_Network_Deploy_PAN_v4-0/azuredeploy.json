@@ -1,0 +1,1673 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "SubPrefix": {
+      "type": "string",
+      "defaultValue": "sub",
+      "metadata": {
+        "description": "This is the Subscription Prefix to use for naming the vNet and subnets."
+      }
+    },
+    "InputMainVNet_Name": {
+      "type": "string",
+      "defaultValue": "vNet",
+      "metadata": {
+        "description": "This is the name of your VNET"
+      }
+    },
+    "MainVNetPrefix": {
+      "type": "string",
+      "defaultValue": "10.0.0.0/21"
+    },
+    "MainVNetSubnet1Name": {
+      "type": "string",
+      "defaultValue": "Web",
+      "metadata": {
+        "description": "This is the prefix name of your web tier subnet"
+      }
+    },
+    "MainVNetSubnet1Prefix": {
+      "type": "string",
+      "defaultValue": "10.0.1.0/24",
+      "metadata": {
+        "description": "This is the CIDR prefix for your web tier subnet"
+      }
+    },
+    "MainVNetSubnet2Name": {
+      "type": "string",
+      "defaultValue": "Apps",
+      "metadata": {
+        "description": "This is the prefix name of your apps subnet"
+      }
+    },
+    "MainVNetSubnet2Prefix": {
+      "type": "string",
+      "defaultValue": "10.0.2.0/24",
+      "metadata": {
+        "description": "This is the CIDR prefix for your apps subnet"
+      }
+    },
+    "MainVNetSubnet3Name": {
+      "type": "string",
+      "defaultValue": "Data",
+      "metadata": {
+        "description": "This is the prefix name of your data tier subnet"
+      }
+    },
+    "MainVNetSubnet3Prefix": {
+      "type": "string",
+      "defaultValue": "10.0.3.0/24",
+      "metadata": {
+        "description": "This is the CIDR prefix for your data tier subnet"
+      }
+    },
+    "MainVNetSubnet4Name": {
+      "type": "string",
+      "defaultValue": "Ad",
+      "metadata": {
+        "description": "This is the prefix name of your AD subnet"
+      }
+    },
+    "MainVNetSubnet4Prefix": {
+      "type": "string",
+      "defaultValue": "10.0.4.0/27",
+      "metadata": {
+        "description": "This is the CIDR prefix for your AD subnet"
+      }
+    },
+    "MainVNetSubnet5Name": {
+      "type": "string",
+      "defaultValue": "Mgmt",
+      "metadata": {
+        "description": "This is the prefix name of your management subnet"
+      }
+    },
+    "MainVNetSubnet5Prefix": {
+      "type": "string",
+      "defaultValue": "10.0.4.64/27",
+      "metadata": {
+        "description": "This is the CIDR prefix for your management subnet"
+      }
+    },
+    "MainVNetSubnet6Name": {
+      "type": "string",
+      "defaultValue": "Intra",
+      "metadata": {
+        "description": ""
+      }
+    },
+    "MainVNetSubnet6Prefix": {
+      "type": "string",
+      "defaultValue": "10.0.5.0/27",
+      "metadata": {
+        "description": ""
+      }
+    },
+    "MainVNetSubnet7Name": {
+      "type": "string",
+      "defaultValue": "Public",
+      "metadata": {
+        "description": ""
+      }
+    },
+    "MainVNetSubnet7Prefix": {
+      "type": "string",
+      "defaultValue": "10.0.5.32/27",
+      "metadata": {
+        "description": ""
+      }
+    },
+    "MainVNetSubnet8Name": {
+      "type": "string",
+      "defaultValue": "Private",
+      "metadata": {
+        "description": ""
+      }
+    },
+    "MainVNetSubnet8Prefix": {
+      "type": "string",
+      "defaultValue": "10.0.5.64/27",
+      "metadata": {
+        "description": ""
+      }
+    },
+    "MainVNetSubnet9Name": {
+      "type": "string",
+      "defaultValue": "Outside",
+      "metadata": {
+        "description": ""
+      }
+    },
+    "MainVNetSubnet9Prefix": {
+      "type": "string",
+      "defaultValue": "10.0.0.0/26",
+      "metadata": {
+        "description": ""
+      }
+    },
+    "MainVNetSubnet10Name": {
+      "type": "string",
+      "defaultValue": "OutsideMgmt",
+      "metadata": {
+        "description": ""
+      }
+    },
+    "MainVNetSubnet10Prefix": {
+      "type": "string",
+      "defaultValue": "10.0.5.96/27",
+      "metadata": {
+        "description": ""
+      }
+    },
+    "PAN_FW_Name_Prefix_Tier1": {
+      "type": "string",
+      "defaultValue": "FW-T1-",
+      "metadata": {
+        "description": ""
+      }
+    },
+    "PAN_FW_Name_Prefix_Tier2": {
+      "type": "string",
+      "defaultValue": "FW-T2-",
+      "metadata": {
+        "description": ""
+      }
+    },
+    "PAN_FW_Name_Prefix_Tier3": {
+      "type": "string",
+      "defaultValue": "FW-T3-",
+      "metadata": {
+        "description": ""
+      }
+    },
+    "PAN_FW_Tier1_CopyLoop": {
+      "type": "int",
+      "defaultValue": 2,
+      "metadata": {
+        "description": ""
+      }
+    },
+    "PAN_FW_Tier2_CopyLoop": {
+      "type": "int",
+      "defaultValue": 2,
+      "metadata": {
+        "description": ""
+      }
+    },
+    "PAN_FW_Tier3_CopyLoop": {
+      "type": "int",
+      "defaultValue": 2,
+      "metadata": {
+        "description": ""
+      }
+    },
+    "PublicIP_T1_FW_DNS_Prefix": {
+      "type": "string",
+      "defaultValue": "[concat(parameters('SubPrefix'),'pip-fw-t1-')]"
+    },
+    "PublicIP_T2_FW_DNS_Prefix": {
+      "type": "string",
+      "defaultValue": "[concat(parameters('SubPrefix'), 'pip-fw-t2-')]"
+    },
+    "PublicIP_T3_FW_DNS_Prefix": {
+      "type": "string",
+      "defaultValue": "[concat(parameters('SubPrefix'), 'pip-fw-t3-')]"
+    },
+    "sa_FW_T1_Name_Prefix": {
+      "type": "string",
+      "defaultValue": "[concat('sa', parameters('SubPrefix'), 'fwt1')]"
+    },
+    "sa_FW_T2_Name_Prefix": {
+      "type": "string",
+      "defaultValue": "[concat('sa', parameters('SubPrefix'), 'fwt2')]"
+    },
+    "sa_FW_T3_Name_Prefix": {
+      "type": "string",
+      "defaultValue": "[concat('sa', parameters('SubPrefix'), 'fwt3')]"
+    },
+    "sa_FW_T1_Type": {
+      "type": "string",
+      "defaultValue": "Premium_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Premium_LRS"
+      ]
+    },
+    "sa_FW_T2_Type": {
+      "type": "string",
+      "defaultValue": "Premium_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Premium_LRS"
+      ]
+    },
+    "sa_FW_T3_Type": {
+      "type": "string",
+      "defaultValue": "Premium_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Premium_LRS"
+      ]
+    },
+    "FW_T1_VM_Size": {
+      "type": "string",
+      "defaultValue": "Standard_Ds3_v2",
+      "allowedValues": [
+        "Standard_Ds3_v2",
+        "Standard_Ds4_v2"
+      ]
+    },
+    "FW_T2_VM_Size": {
+      "type": "string",
+      "defaultValue": "Standard_Ds3_v2",
+      "allowedValues": [
+        "Standard_Ds3_v2",
+        "Standard_Ds4_v2"
+      ]
+    },
+    "FW_T3_VM_Size": {
+      "type": "string",
+      "defaultValue": "Standard_Ds3_v2",
+      "allowedValues": [
+        "Standard_Ds3_v2",
+        "Standard_Ds4_v2"
+      ]
+    },
+
+    "adminUserName": {
+      "type": "string",
+      "defaultValue": "adminTom"
+    },
+    "adminPassword": {
+      "type": "securestring",
+      "defaultValue": "P@ssw0rd123!"
+    },
+    "LocalSite_Public_IP_Range": {
+      "type": "string",
+      "defaultValue": "65.78.192.127"
+    }
+
+    },
+  "variables": {
+    "MainVNet_Name": "[concat(parameters('SubPrefix'), '_', parameters('InputMainVNet_Name'))]",
+    "MainVNet_ID": "[resourceId('Microsoft.Network/virtualNetworks',variables('MainVNet_Name'))]",
+    "Subnet1Name": "[concat(parameters('SubPrefix'), '_', parameters('MainVNetSubnet1Name'), '_subnet')]",
+    "Subnet2Name": "[concat(parameters('SubPrefix'), '_', parameters('MainVNetSubnet2Name'), '_subnet')]",
+    "Subnet3Name": "[concat(parameters('SubPrefix'), '_', parameters('MainVNetSubnet3Name'), '_subnet')]",
+    "Subnet4Name": "[concat(parameters('SubPrefix'), '_', parameters('MainVNetSubnet4Name'), '_subnet')]",
+    "Subnet5Name": "[concat(parameters('SubPrefix'), '_', parameters('MainVNetSubnet5Name'), '_subnet')]",
+    "Subnet6Name": "[concat(parameters('SubPrefix'), '_', parameters('MainVNetSubnet6Name'), '_subnet')]",
+    "Subnet7Name": "[concat(parameters('SubPrefix'), '_', parameters('MainVNetSubnet7Name'), '_subnet')]",
+    "Subnet8Name": "[concat(parameters('SubPrefix'), '_', parameters('MainVNetSubnet8Name'), '_subnet')]",
+    "Subnet9Name": "[concat(parameters('SubPrefix'), '_', parameters('MainVNetSubnet9Name'), '_subnet')]",
+    "Subnet10Name": "[concat(parameters('SubPrefix'), '_', parameters('MainVNetSubnet10Name'), '_subnet')]",
+    "Tier1_FW_Name": "[concat(parameters('SubPrefix'), '-', parameters('PAN_FW_Name_Prefix_Tier1'))]",
+    "Tier2_FW_Name": "[concat(parameters('SubPrefix'), '-', parameters('PAN_FW_Name_Prefix_Tier2'))]",
+    "Tier3_FW_Name": "[concat(parameters('SubPrefix'), '-', parameters('PAN_FW_Name_Prefix_Tier3'))]",
+    "Nic_PAN_FW_Tier1_Prefix": "[concat(parameters('SubPrefix'), '-', parameters('PAN_FW_Name_Prefix_Tier1'))]",
+    "Nic_PAN_FW_Tier2_Prefix": "[concat(parameters('SubPrefix'), '-', parameters('PAN_FW_Name_Prefix_Tier2'))]",
+    "Nic_PAN_FW_Tier3_Prefix": "[concat(parameters('SubPrefix'), '-', parameters('PAN_FW_Name_Prefix_Tier3'))]",
+    "Nic_PAN_FW_Tier1_ID": "[resourceId('Microsoft.Network/networkInterfaces',variables('Nic_PAN_FW_Tier1_Prefix'))]",
+    "Nic_PAN_FW_Tier2_ID": "[resourceId('Microsoft.Network/networkInterfaces',variables('Nic_PAN_FW_Tier2_Prefix'))]",
+    "Nic_PAN_FW_Tier3_ID": "[resourceId('Microsoft.Network/networkInterfaces',variables('Nic_PAN_FW_Tier3_Prefix'))]",
+    "PublicIP_T1_FW_DNS_ID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('PublicIP_T1_FW_DNS_Prefix'))]",
+    "PublicIP_T2_FW_DNS_ID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('PublicIP_T2_FW_DNS_Prefix'))]",
+    "PublicIP_T3_FW_DNS_ID": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('PublicIP_T3_FW_DNS_Prefix'))]",
+
+    "iLoadBalancer_T1_Name": "[concat(parameters('SubPrefix'), '-', parameters('PAN_FW_Name_Prefix_Tier1'), '-iLB')]",
+    "iLoadBalancer_T2_Name": "[concat(parameters('SubPrefix'), '-', parameters('PAN_FW_Name_Prefix_Tier2'), '-iLB')]",
+    "iLoadBalancer_T3_Name": "[concat(parameters('SubPrefix'), '-', parameters('PAN_FW_Name_Prefix_Tier3'), '-iLB')]",
+
+    "iLoadBalancer_T1_Eth1_Name": "[concat(parameters('SubPrefix'), '-', parameters('PAN_FW_Name_Prefix_Tier1'), 'Eth1-iLB')]",
+    "iLoadBalancer_T1_Eth1_BackendPool_Name": "[concat(variables('iLoadBalancer_T1_Eth1_Name'), '-BackendPool')]",
+    "iLoadBalancer_T1_Eth1_FrontEnd_Name": "[concat(variables('iLoadBalancer_T1_Eth1_Name'), '-FrontEnd')]",
+    "iLoadBalancer_T1_Eth1_Probe_Name": "[concat(variables('iLoadBalancer_T1_Eth1_Name'), '-HealthProbe')]",
+    "iLoadBalancer_T1_ID": "[resourceId('Microsoft.Network/loadBalancers',variables('iLoadBalancer_T1_Name'))]",
+    "iLoadBalancer_T1_Eth1_BackPool_ID": "[concat(variables('iLoadBalancer_T1_ID'),'/backendAddressPools/',variables('iLoadBalancer_T1_Eth1_BackendPool_Name'))]",
+    "iLoadBalancer_T1_Eth1_FE_IPConfig_ID": "[concat(variables('iLoadBalancer_T1_ID'),'/frontendIPConfigurations/',variables('iLoadBalancer_T1_Eth1_FrontEnd_Name'))]",
+    "iLoadBalancer_T1_Eth1_Probe_ID": "[concat(variables('iLoadBalancer_T1_ID'),'/probes/',variables('iLoadBalancer_T1_Eth1_Probe_Name'))]",
+    "iLoadBalancer_T1_Eth1_Rule_Name": "[concat(variables('iLoadBalancer_T1_Eth1_Name'), '-Rule')]",
+
+    "iLoadBalancer_T1_Eth2_Name": "[concat(parameters('SubPrefix'), '-', parameters('PAN_FW_Name_Prefix_Tier1'), 'Eth2-iLB')]",
+    "iLoadBalancer_T1_Eth2_BackendPool_Name": "[concat(variables('iLoadBalancer_T1_Eth2_Name'), '-BackendPool')]",
+    "iLoadBalancer_T1_Eth2_FrontEnd_Name": "[concat(variables('iLoadBalancer_T1_Eth2_Name'), '-FrontEnd')]",
+    "iLoadBalancer_T1_Eth2_Probe_Name": "[concat(variables('iLoadBalancer_T1_Eth2_Name'), '-HealthProbe')]",
+    "iLoadBalancer_T1_Eth2_ID": "[resourceId('Microsoft.Network/loadBalancers',variables('iLoadBalancer_T1_Eth2_Name'))]",
+    "iLoadBalancer_T1_Eth2_BackPool_ID": "[concat(variables('iLoadBalancer_T1_ID'),'/backendAddressPools/',variables('iLoadBalancer_T1_Eth2_BackendPool_Name'))]",
+    "iLoadBalancer_T1_Eth2_FE_IPConfig_ID": "[concat(variables('iLoadBalancer_T1_ID'),'/frontendIPConfigurations/',variables('iLoadBalancer_T1_Eth2_FrontEnd_Name'))]",
+    "iLoadBalancer_T1_Eth2_Probe_ID": "[concat(variables('iLoadBalancer_T1_ID'),'/probes/',variables('iLoadBalancer_T1_Eth2_Probe_Name'))]",
+    "iLoadBalancer_T1_Eth2_Rule_Name": "[concat(variables('iLoadBalancer_T1_Eth2_Name'), '-Rule')]",
+
+    "iLoadBalancer_T2_Eth1_Name": "[concat(parameters('SubPrefix'), '-', parameters('PAN_FW_Name_Prefix_Tier2'), 'Eth1-iLB')]",
+    "iLoadBalancer_T2_Eth1_BackendPool_Name": "[concat(variables('iLoadBalancer_T2_Eth1_Name'), '-BackendPool')]",
+    "iLoadBalancer_T2_Eth1_FrontEnd_Name": "[concat(variables('iLoadBalancer_T2_Eth1_Name'), '-FrontEnd')]",
+    "iLoadBalancer_T2_Eth1_Probe_Name": "[concat(variables('iLoadBalancer_T2_Eth1_Name'), '-HealthProbe')]",
+    "iLoadBalancer_T2_ID": "[resourceId('Microsoft.Network/loadBalancers',variables('iLoadBalancer_T2_Name'))]",
+    "iLoadBalancer_T2_Eth1_BackPool_ID": "[concat(variables('iLoadBalancer_T2_ID'),'/backendAddressPools/',variables('iLoadBalancer_T2_Eth1_BackendPool_Name'))]",
+    "iLoadBalancer_T2_Eth1_FE_IPConfig_ID": "[concat(variables('iLoadBalancer_T2_ID'),'/frontendIPConfigurations/',variables('iLoadBalancer_T2_Eth1_FrontEnd_Name'))]",
+    "iLoadBalancer_T2_Eth1_Probe_ID": "[concat(variables('iLoadBalancer_T2_ID'),'/probes/',variables('iLoadBalancer_T2_Eth1_Probe_Name'))]",
+    "iLoadBalancer_T2_Eth1_Rule_Name": "[concat(variables('iLoadBalancer_T2_Eth1_Name'), '-Rule')]",
+
+    "iLoadBalancer_T2_Eth2_Name": "[concat(parameters('SubPrefix'), '-', parameters('PAN_FW_Name_Prefix_Tier2'), 'Eth2-iLB')]",
+    "iLoadBalancer_T2_Eth2_BackendPool_Name": "[concat(variables('iLoadBalancer_T2_Eth2_Name'), '-BackendPool')]",
+    "iLoadBalancer_T2_Eth2_FrontEnd_Name": "[concat(variables('iLoadBalancer_T2_Eth2_Name'), '-FrontEnd')]",
+    "iLoadBalancer_T2_Eth2_Probe_Name": "[concat(variables('iLoadBalancer_T2_Eth2_Name'), '-HealthProbe')]",
+    "iLoadBalancer_T2_Eth2_ID": "[resourceId('Microsoft.Network/loadBalancers',variables('iLoadBalancer_T2_Eth2_Name'))]",
+    "iLoadBalancer_T2_Eth2_BackPool_ID": "[concat(variables('iLoadBalancer_T2_ID'),'/backendAddressPools/',variables('iLoadBalancer_T2_Eth2_BackendPool_Name'))]",
+    "iLoadBalancer_T2_Eth2_FE_IPConfig_ID": "[concat(variables('iLoadBalancer_T2_ID'),'/frontendIPConfigurations/',variables('iLoadBalancer_T2_Eth2_FrontEnd_Name'))]",
+    "iLoadBalancer_T2_Eth2_Probe_ID": "[concat(variables('iLoadBalancer_T2_ID'),'/probes/',variables('iLoadBalancer_T2_Eth2_Probe_Name'))]",
+    "iLoadBalancer_T2_Eth2_Rule_Name": "[concat(variables('iLoadBalancer_T2_Eth2_Name'), '-Rule')]",
+
+    "iLoadBalancer_T3_Eth1_Name": "[concat(parameters('SubPrefix'), '-', parameters('PAN_FW_Name_Prefix_Tier3'), 'Eth1-iLB')]",
+    "iLoadBalancer_T3_Eth1_BackendPool_Name": "[concat(variables('iLoadBalancer_T3_Eth1_Name'), '-BackendPool')]",
+    "iLoadBalancer_T3_Eth1_FrontEnd_Name": "[concat(variables('iLoadBalancer_T3_Eth1_Name'), '-FrontEnd')]",
+    "iLoadBalancer_T3_Eth1_Probe_Name": "[concat(variables('iLoadBalancer_T3_Eth1_Name'), '-HealthProbe')]",
+    "iLoadBalancer_T3_ID": "[resourceId('Microsoft.Network/loadBalancers',variables('iLoadBalancer_T3_Name'))]",
+    "iLoadBalancer_T3_Eth1_BackPool_ID": "[concat(variables('iLoadBalancer_T3_ID'),'/backendAddressPools/',variables('iLoadBalancer_T3_Eth1_BackendPool_Name'))]",
+    "iLoadBalancer_T3_Eth1_FE_IPConfig_ID": "[concat(variables('iLoadBalancer_T3_ID'),'/frontendIPConfigurations/',variables('iLoadBalancer_T3_Eth1_FrontEnd_Name'))]",
+    "iLoadBalancer_T3_Eth1_Probe_ID": "[concat(variables('iLoadBalancer_T3_ID'),'/probes/',variables('iLoadBalancer_T3_Eth1_Probe_Name'))]",
+    "iLoadBalancer_T3_Eth1_Rule_Name": "[concat(variables('iLoadBalancer_T3_Eth1_Name'), '-Rule')]",
+
+    "iLoadBalancer_T3_Eth2_Name": "[concat(parameters('SubPrefix'), '-', parameters('PAN_FW_Name_Prefix_Tier3'), 'Eth2-iLB')]",
+    "iLoadBalancer_T3_Eth2_BackendPool_Name": "[concat(variables('iLoadBalancer_T3_Eth2_Name'), '-BackendPool')]",
+    "iLoadBalancer_T3_Eth2_FrontEnd_Name": "[concat(variables('iLoadBalancer_T3_Eth2_Name'), '-FrontEnd')]",
+    "iLoadBalancer_T3_Eth2_Probe_Name": "[concat(variables('iLoadBalancer_T3_Eth2_Name'), '-HealthProbe')]",
+    "iLoadBalancer_T3_Eth2_ID": "[resourceId('Microsoft.Network/loadBalancers',variables('iLoadBalancer_T3_Eth2_Name'))]",
+    "iLoadBalancer_T3_Eth2_BackPool_ID": "[concat(variables('iLoadBalancer_T3_ID'),'/backendAddressPools/',variables('iLoadBalancer_T3_Eth2_BackendPool_Name'))]",
+    "iLoadBalancer_T3_Eth2_FE_IPConfig_ID": "[concat(variables('iLoadBalancer_T3_ID'),'/frontendIPConfigurations/',variables('iLoadBalancer_T3_Eth2_FrontEnd_Name'))]",
+    "iLoadBalancer_T3_Eth2_Probe_ID": "[concat(variables('iLoadBalancer_T3_ID'),'/probes/',variables('iLoadBalancer_T3_Eth2_Probe_Name'))]",
+    "iLoadBalancer_T3_Eth2_Rule_Name": "[concat(variables('iLoadBalancer_T3_Eth2_Name'), '-Rule')]",
+
+    "FW_NSG_OutsideMgmt_Subnet": "[concat(parameters('SubPrefix'), '-', parameters('MainVNetSubnet10Name'), '-NSG')]",
+
+    "saFW_T1_Name": "[concat(parameters('sa_FW_T1_Name_Prefix'), uniqueString(resourceGroup().id))]",
+    "saFW_T2_Name": "[concat(parameters('sa_FW_T2_Name_Prefix'), uniqueString(resourceGroup().id))]",
+    "saFW_T3_Name": "[concat(parameters('sa_FW_T3_Name_Prefix'), uniqueString(resourceGroup().id))]",
+
+    "FW_T1_AvailabilitySet_Name": "[concat(variables('Tier1_FW_Name'), 'AS')]",
+    "FW_T2_AvailabilitySet_Name": "[concat(variables('Tier2_FW_Name'), 'AS')]",
+    "FW_T3_AvailabilitySet_Name": "[concat(variables('Tier3_FW_Name'), 'AS')]",
+
+    "VHD_StorageAccount_Container_Name": "vhds",
+
+    "VM_Image_OSType": "Linux",
+    "VM_Image_Publisher": "paloaltonetworks",
+    "VM_Image_Offer": "vmseries1",
+    "VM_OS_Version": "8.0.0",
+    "VM_Image_SKU": "byol"
+  },
+  "resources": [
+    {
+      "name": "[variables('MainVNet_Name')]",
+      "type": "Microsoft.Network/virtualNetworks",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-03-30",
+      "tags": {
+        "ManagementType": "Network",
+        "Environment": "Production",
+        "WorkLoad": "Azure"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups',variables('FW_NSG_OutsideMgmt_Subnet'))]"
+      ],
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[parameters('MainVNetPrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('Subnet1Name')]",
+            "properties": {
+              "addressPrefix": "[parameters('MainVNetSubnet1Prefix')]"
+            }
+          },
+          {
+            "name": "[variables('Subnet2Name')]",
+            "properties": {
+              "addressPrefix": "[parameters('MainVNetSubnet2Prefix')]"
+            }
+          },
+          {
+            "name": "[variables('Subnet3Name')]",
+            "properties": {
+              "addressPrefix": "[parameters('MainVNetSubnet3Prefix')]"
+            }
+          },
+          {
+            "name": "[variables('Subnet4Name')]",
+            "properties": {
+              "addressPrefix": "[parameters('MainVNetSubnet4Prefix')]"
+            }
+          },
+          {
+            "name": "[variables('Subnet5Name')]",
+            "properties": {
+              "addressPrefix": "[parameters('MainVNetSubnet5Prefix')]"
+            }
+          },
+          {
+            "name": "[variables('Subnet6Name')]",
+            "properties": {
+              "addressPrefix": "[parameters('MainVNetSubnet6Prefix')]"
+
+            }
+          },
+          {
+            "name": "[variables('Subnet7Name')]",
+            "properties": {
+              "addressPrefix": "[parameters('MainVNetSubnet7Prefix')]"
+
+            }
+          },
+          {
+            "name": "[variables('Subnet8Name')]",
+            "properties": {
+              "addressPrefix": "[parameters('MainVNetSubnet8Prefix')]"
+
+            }
+          },
+          {
+            "name": "[variables('Subnet9Name')]",
+            "properties": {
+              "addressPrefix": "[parameters('MainVNetSubnet9Prefix')]"
+
+            }
+          },
+          {
+            "name": "[variables('Subnet10Name')]",
+            "properties": {
+              "addressPrefix": "[parameters('MainVNetSubnet10Prefix')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('FW_NSG_OutsideMgmt_Subnet'))]"
+              }
+
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[variables('FW_NSG_OutsideMgmt_Subnet')]",
+      "apiVersion": "2016-03-30",
+      "location": "[resourceGroup().Location]",
+      "scale": null,
+      "properties": {
+        "securityRules": [
+          {
+            "name": "Allow-Outside-From-IP",
+            "properties": {
+              "description": "Allow source IP to connect to outsidemgmt IP.",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "[parameters('LocalSite_Public_IP_Range')]",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "Default-Deny",
+            "properties": {
+              "description": "Default-Deny if we don't match Allow rule",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Deny",
+              "priority": 200,
+              "direction": "Inbound"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(variables('Nic_PAN_FW_Tier1_Prefix'), copyIndex(1), '-Eth0')]",
+      "apiVersion": "2017-03-01",
+      "tags": {
+        "ManagementType": "Firewall",
+        "Environment": "Production",
+        "WorkLoad": "Security"
+      },
+      "location": "[resourceGroup().Location]",
+      "copy": {
+        "name": "Pan-Nic-Loop-T1-Eth0",
+        "count": "[parameters('PAN_FW_Tier1_CopyLoop')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', variables('MainVNet_Name'))]",
+        "[concat('Microsoft.Network/publicIPAddresses/', parameters('PublicIP_T1_FW_DNS_Prefix'), copyIndex(1), '-', uniqueString(resourceGroup().id))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "OutsideMgmt-NicConfig",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[concat(variables('MainVNet_ID'),'/subnets/',variables('Subnet10Name'))]"
+              },
+              "publicIPAddress": {
+                "id": "[concat(variables('PublicIP_T1_FW_DNS_ID'), copyIndex(1), '-', uniqueString(resourceGroup().id))]"
+              }
+
+            }
+          }
+        ],
+        "dnsSettings": {
+          "dnsServers": []
+        },
+        "enableIPForwarding": false
+      }
+
+    },
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(variables('Nic_PAN_FW_Tier1_Prefix'), copyIndex(1), '-Eth1')]",
+      "apiVersion": "2017-03-01",
+      "tags": {
+        "ManagementType": "Firewall",
+        "Environment": "Production",
+        "WorkLoad": "Security"
+      },
+      "location": "[resourceGroup().Location]",
+      "copy": {
+        "name": "Pan-Nic-Loop-T1-Eth1",
+        "count": "[parameters('PAN_FW_Tier1_CopyLoop')]"
+      },
+      "dependsOn": [
+        "[variables('MainVNet_ID')]",
+        "[variables('iLoadBalancer_T1_ID')]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig-untrust",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[concat(variables('MainVNet_ID'),'/subnets/',variables('Subnet9Name'))]"
+              },
+              "loadBalancerBackendAddressPools": [
+                {
+                  "id": "[variables('iLoadBalancer_T1_Eth1_BackPool_ID')]"
+                }
+              ]
+
+            }
+          }
+        ],
+        "dnsSettings": {
+          "dnsServers": []
+        },
+        "enableIPForwarding": true
+
+      }
+
+    },
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(variables('Nic_PAN_FW_Tier1_Prefix'), copyIndex(1), '-Eth2')]",
+      "apiVersion": "2017-03-01",
+      "tags": {
+        "ManagementType": "Firewall",
+        "Environment": "Production",
+        "WorkLoad": "Security"
+      },
+      "location": "[resourceGroup().Location]",
+      "copy": {
+        "name": "Pan-Nic-Loop-T1-Eth2",
+        "count": "[parameters('PAN_FW_Tier1_CopyLoop')]"
+      },
+      "dependsOn": [
+        "[variables('MainVNet_ID')]",
+        "[variables('iLoadBalancer_T1_ID')]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig-trust",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[concat(variables('MainVNet_ID'),'/subnets/',variables('Subnet8Name'))]"
+              },
+              "loadBalancerBackendAddressPools": [
+                {
+                  "id": "[variables('iLoadBalancer_T1_Eth2_BackPool_ID')]"
+                }
+              ]
+
+            }
+          }
+        ],
+        "dnsSettings": {
+          "dnsServers": []
+        },
+        "enableIPForwarding": true
+      }
+
+    },
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(variables('Nic_PAN_FW_Tier2_Prefix'), copyIndex(1), '-Eth0')]",
+      "apiVersion": "2017-03-01",
+      "tags": {
+        "ManagementType": "Firewall",
+        "Environment": "Production",
+        "WorkLoad": "Security"
+      },
+      "location": "[resourceGroup().Location]",
+      "copy": {
+        "name": "Pan-Nic-Loop-T2-Eth0",
+        "count": "[parameters('PAN_FW_Tier2_CopyLoop')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', variables('MainVNet_Name'))]",
+        "[concat('Microsoft.Network/publicIPAddresses/', parameters('PublicIP_T2_FW_DNS_Prefix'), copyIndex(1), '-', uniqueString(resourceGroup().id))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "OutsideMgmt-NicConfig",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[concat(variables('MainVNet_ID'),'/subnets/',variables('Subnet10Name'))]"
+              },
+              "publicIPAddress": {
+                "id": "[concat(variables('PublicIP_T2_FW_DNS_ID'), copyIndex(1), '-', uniqueString(resourceGroup().id))]"
+              }
+
+            }
+          }
+        ],
+        "dnsSettings": {
+          "dnsServers": []
+        },
+        "enableIPForwarding": false
+      }
+
+    },
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(variables('Nic_PAN_FW_Tier2_Prefix'), copyIndex(1), '-Eth1')]",
+      "apiVersion": "2017-03-01",
+      "tags": {
+        "ManagementType": "Firewall",
+        "Environment": "Production",
+        "WorkLoad": "Security"
+      },
+      "location": "[resourceGroup().Location]",
+      "copy": {
+        "name": "Pan-Nic-Loop-T2-Eth1",
+        "count": "[parameters('PAN_FW_Tier2_CopyLoop')]"
+      },
+      "dependsOn": [
+        "[variables('MainVNet_ID')]",
+        "[variables('iLoadBalancer_T2_ID')]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig-untrust",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[concat(variables('MainVNet_ID'),'/subnets/',variables('Subnet9Name'))]"
+              },
+              "loadBalancerBackendAddressPools": [
+                {
+                  "id": "[variables('iLoadBalancer_T2_Eth1_BackPool_ID')]"
+                }
+              ]
+
+            }
+          }
+        ],
+        "dnsSettings": {
+          "dnsServers": []
+        },
+        "enableIPForwarding": true
+
+      }
+
+    },
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(variables('Nic_PAN_FW_Tier2_Prefix'), copyIndex(1), '-Eth2')]",
+      "apiVersion": "2017-03-01",
+      "tags": {
+        "ManagementType": "Firewall",
+        "Environment": "Production",
+        "WorkLoad": "Security"
+      },
+      "location": "[resourceGroup().Location]",
+      "copy": {
+        "name": "Pan-Nic-Loop-T2-Eth2",
+        "count": "[parameters('PAN_FW_Tier2_CopyLoop')]"
+      },
+      "dependsOn": [
+        "[variables('MainVNet_ID')]",
+        "[variables('iLoadBalancer_T2_ID')]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig-trust",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[concat(variables('MainVNet_ID'),'/subnets/',variables('Subnet7Name'))]"
+              },
+              "loadBalancerBackendAddressPools": [
+                {
+                  "id": "[variables('iLoadBalancer_T2_Eth2_BackPool_ID')]"
+                }
+              ]
+
+            }
+          }
+        ],
+        "dnsSettings": {
+          "dnsServers": []
+        },
+        "enableIPForwarding": true
+      }
+
+    },
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(variables('Nic_PAN_FW_Tier3_Prefix'), copyIndex(1), '-Eth0')]",
+      "apiVersion": "2017-03-01",
+      "tags": {
+        "ManagementType": "Firewall",
+        "Environment": "Production",
+        "WorkLoad": "Security"
+      },
+      "location": "[resourceGroup().Location]",
+      "copy": {
+        "name": "Pan-Nic-Loop-T3-Eth0",
+        "count": "[parameters('PAN_FW_Tier3_CopyLoop')]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', variables('MainVNet_Name'))]",
+        "[concat('Microsoft.Network/publicIPAddresses/', parameters('PublicIP_T3_FW_DNS_Prefix'), copyIndex(1), '-', uniqueString(resourceGroup().id))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "OutsideMgmt-NicConfig",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[concat(variables('MainVNet_ID'),'/subnets/',variables('Subnet10Name'))]"
+              },
+              "publicIPAddress": {
+                "id": "[concat(variables('PublicIP_T3_FW_DNS_ID'), copyIndex(1), '-', uniqueString(resourceGroup().id))]"
+              }
+
+            }
+          }
+        ],
+        "dnsSettings": {
+          "dnsServers": []
+        },
+        "enableIPForwarding": false
+      }
+
+    },
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(variables('Nic_PAN_FW_Tier3_Prefix'), copyIndex(1), '-Eth1')]",
+      "apiVersion": "2017-03-01",
+      "tags": {
+        "ManagementType": "Firewall",
+        "Environment": "Production",
+        "WorkLoad": "Security"
+      },
+      "location": "[resourceGroup().Location]",
+      "copy": {
+        "name": "Pan-Nic-Loop-T3-Eth1",
+        "count": "[parameters('PAN_FW_Tier3_CopyLoop')]"
+      },
+      "dependsOn": [
+        "[variables('MainVNet_ID')]",
+        "[variables('iLoadBalancer_T3_ID')]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig-untrust",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[concat(variables('MainVNet_ID'),'/subnets/',variables('Subnet9Name'))]"
+              },
+              "loadBalancerBackendAddressPools": [
+                {
+                  "id": "[variables('iLoadBalancer_T3_Eth1_BackPool_ID')]"
+                }
+              ]
+
+            }
+          }
+        ],
+        "dnsSettings": {
+          "dnsServers": []
+        },
+        "enableIPForwarding": true
+
+      }
+
+    },
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(variables('Nic_PAN_FW_Tier3_Prefix'), copyIndex(1), '-Eth2')]",
+      "apiVersion": "2017-03-01",
+      "tags": {
+        "ManagementType": "Firewall",
+        "Environment": "Production",
+        "WorkLoad": "Security"
+      },
+      "location": "[resourceGroup().Location]",
+      "copy": {
+        "name": "Pan-Nic-Loop-T3-Eth2",
+        "count": "[parameters('PAN_FW_Tier3_CopyLoop')]"
+      },
+      "dependsOn": [
+        "[variables('MainVNet_ID')]",
+        "[variables('iLoadBalancer_T3_ID')]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig-trust",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[concat(variables('MainVNet_ID'),'/subnets/',variables('Subnet6Name'))]"
+              },
+              "loadBalancerBackendAddressPools": [
+                {
+                  "id": "[variables('iLoadBalancer_T3_Eth2_BackPool_ID')]"
+                }
+              ]
+
+            }
+          }
+        ],
+        "dnsSettings": {
+          "dnsServers": []
+        },
+        "enableIPForwarding": true
+      }
+
+    },
+    {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[concat(parameters('PublicIP_T1_FW_DNS_Prefix'),copyIndex(1),'-',uniqueString(resourceGroup().id))]",
+      "apiVersion": "2017-03-01",
+      "tags": {
+        "ManagementType": "Firewall",
+        "Environment": "Production",
+        "WorkLoad": "Security"
+      },
+      "copy": {
+        "name": "PIP-Nic-Loop-T1-Eth0",
+        "count": "[parameters('PAN_FW_Tier1_CopyLoop')]"
+      },
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic",
+        "dnsSettings": {
+          "domainNameLabel": "[concat(parameters('PublicIP_T1_FW_DNS_Prefix'),copyIndex(1),'-',uniqueString(resourceGroup().id))]"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[concat(parameters('PublicIP_T2_FW_DNS_Prefix'),copyIndex(1),'-',uniqueString(resourceGroup().id))]",
+      "apiVersion": "2017-03-01",
+      "tags": {
+        "ManagementType": "Firewall",
+        "Environment": "Production",
+        "WorkLoad": "Security"
+      },
+      "copy": {
+        "name": "PIP-Nic-Loop-T2-Eth0",
+        "count": "[parameters('PAN_FW_Tier2_CopyLoop')]"
+      },
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic",
+        "dnsSettings": {
+          "domainNameLabel": "[concat(parameters('PublicIP_T2_FW_DNS_Prefix'),copyIndex(1),'-',uniqueString(resourceGroup().id))]"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[concat(parameters('PublicIP_T3_FW_DNS_Prefix'),copyIndex(1),'-',uniqueString(resourceGroup().id))]",
+      "apiVersion": "2017-03-01",
+      "tags": {
+        "ManagementType": "Firewall",
+        "Environment": "Production",
+        "WorkLoad": "Security"
+      },
+      "copy": {
+        "name": "PIP-Nic-Loop-T3-Eth0",
+        "count": "[parameters('PAN_FW_Tier3_CopyLoop')]"
+      },
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic",
+        "dnsSettings": {
+          "domainNameLabel": "[concat(parameters('PublicIP_T3_FW_DNS_Prefix'),copyIndex(1),'-',uniqueString(resourceGroup().id))]"
+        }
+      }
+    },
+    {
+      "name": "[variables('saFW_T1_Name')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-01-01",
+      "tags": {
+        "ManagementType": "Firewall",
+        "Environment": "Production",
+        "WorkLoad": "Security"
+      },
+      "sku": {
+        "name": "[parameters('sa_FW_T1_Type')]"
+      },
+      "dependsOn": [],
+      "kind": "Storage"
+    },
+    {
+      "name": "[variables('saFW_T2_Name')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-01-01",
+      "tags": {
+        "ManagementType": "Firewall",
+        "Environment": "Production",
+        "WorkLoad": "Security"
+      },
+      "sku": {
+        "name": "[parameters('sa_FW_T2_Type')]"
+      },
+      "dependsOn": [],
+      "kind": "Storage"
+    },
+    {
+      "name": "[variables('saFW_T3_Name')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-01-01",
+      "tags": {
+        "ManagementType": "Firewall",
+        "Environment": "Production",
+        "WorkLoad": "Security"
+      },
+      "sku": {
+        "name": "[parameters('sa_FW_T3_Type')]"
+      },
+      "dependsOn": [],
+      "kind": "Storage"
+    },
+
+    {
+      "type": "Microsoft.Compute/availabilitySets",
+      "name": "[variables('FW_T1_AvailabilitySet_Name')]",
+      "location": "[resourceGroup().Location]",
+      "apiVersion": "2017-03-30",
+      "tags": {
+        "ManagementType": "Server",
+        "Environment": "Production",
+        "WorkLoad": "ADFS"
+      },
+      "properties": {}
+    },
+    {
+      "type": "Microsoft.Compute/availabilitySets",
+      "name": "[variables('FW_T2_AvailabilitySet_Name')]",
+      "location": "[resourceGroup().Location]",
+      "apiVersion": "2017-03-30",
+      "tags": {
+        "ManagementType": "Server",
+        "Environment": "Production",
+        "WorkLoad": "ADFS"
+      },
+      "properties": {}
+    },
+    {
+      "type": "Microsoft.Compute/availabilitySets",
+      "name": "[variables('FW_T3_AvailabilitySet_Name')]",
+      "location": "[resourceGroup().Location]",
+      "apiVersion": "2017-03-30",
+      "tags": {
+        "ManagementType": "Server",
+        "Environment": "Production",
+        "WorkLoad": "ADFS"
+      },
+      "properties": {}
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[concat(variables('Tier1_FW_Name'), copyIndex(1))]",
+      "location": "[resourceGroup().Location]",
+      "apiVersion": "2016-04-30-preview",
+      "tags": {
+        "ManagementType": "Firewall",
+        "Environment": "Production",
+        "WorkLoad": "Security"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', variables('saFW_T1_Name'))]",
+        "[concat('Microsoft.Compute/availabilitySets/', variables('FW_T1_AvailabilitySet_Name'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('Nic_PAN_FW_Tier1_Prefix'), copyIndex(1), '-Eth0')]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('Nic_PAN_FW_Tier1_Prefix'), copyIndex(1), '-Eth1')]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('Nic_PAN_FW_Tier1_Prefix'), copyIndex(1), '-Eth2')]"
+      ],
+      "copy": {
+        "name": "[concat(parameters('PAN_FW_Name_Prefix_Tier1'), 'copyLoop')]",
+        "count": "[parameters('PAN_FW_Tier1_CopyLoop')]"
+      },
+      "plan": {
+        "name": "byol",
+        "product": "vmseries1",
+        "publisher": "paloaltonetworks"
+      },
+      "scale": null,
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('FW_T1_VM_Size')]"
+        },
+
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets',variables('FW_T1_AvailabilitySet_Name'))]"
+        },
+
+        "osProfile": {
+          "computerName": "[concat(variables('Tier1_FW_Name'), copyIndex(1))]",
+          "adminUsername": "[parameters('adminUserName')]",
+          "adminPassword": "[parameters('adminPassword')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": false
+          },
+          "secrets": []
+
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[variables('VM_Image_Publisher')]",
+            "offer": "[variables('VM_Image_Offer')]",
+            "sku": "[variables('VM_Image_SKU')]",
+            "version": "[variables('VM_OS_Version')]"
+          },
+          "osDisk": {
+            "osType": "[variables('VM_Image_OSType')]",
+            "name": "[concat(variables('Tier1_FW_Name'), copyIndex(1), 'OSDisk')]",
+            "vhd": {
+              "uri": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts', variables('saFW_T1_Name')), '2016-01-01').primaryEndpoints.blob, variables('VHD_StorageAccount_Container_Name'), '/', variables('Tier1_FW_Name'), copyIndex(1), 'OSDisk', '.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          },
+          "dataDisks": []
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[concat(variables('Nic_PAN_FW_Tier1_ID'), copyIndex(1), '-Eth0')]",
+              "properties": {
+                "primary": true
+              }
+            },
+            {
+              "id": "[concat(variables('Nic_PAN_FW_Tier1_ID'), copyIndex(1), '-Eth1')]",
+              "properties": {
+                "primary": false
+              }
+            },
+            {
+              "id": "[concat(variables('Nic_PAN_FW_Tier1_ID'), copyIndex(1), '-Eth2')]",
+              "properties": {
+                "primary": false
+              }
+            }
+          ]
+        }
+
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[concat(variables('Tier2_FW_Name'), copyIndex(1))]",
+      "location": "[resourceGroup().Location]",
+      "apiVersion": "2016-04-30-preview",
+      "tags": {
+        "ManagementType": "Firewall",
+        "Environment": "Production",
+        "WorkLoad": "Security"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', variables('saFW_T2_Name'))]",
+        "[concat('Microsoft.Compute/availabilitySets/', variables('FW_T2_AvailabilitySet_Name'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('Nic_PAN_FW_Tier2_Prefix'), copyIndex(1), '-Eth0')]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('Nic_PAN_FW_Tier2_Prefix'), copyIndex(1), '-Eth1')]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('Nic_PAN_FW_Tier2_Prefix'), copyIndex(1), '-Eth2')]"
+      ],
+      "copy": {
+        "name": "[concat(parameters('PAN_FW_Name_Prefix_Tier2'), 'copyLoop')]",
+        "count": "[parameters('PAN_FW_Tier2_CopyLoop')]"
+      },
+      "plan": {
+        "name": "byol",
+        "product": "vmseries1",
+        "publisher": "paloaltonetworks"
+      },
+      "scale": null,
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('FW_T2_VM_Size')]"
+        },
+
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets',variables('FW_T2_AvailabilitySet_Name'))]"
+        },
+
+        "osProfile": {
+          "computerName": "[concat(variables('Tier2_FW_Name'), copyIndex(1))]",
+          "adminUsername": "[parameters('adminUserName')]",
+          "adminPassword": "[parameters('adminPassword')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": false
+          },
+          "secrets": []
+
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[variables('VM_Image_Publisher')]",
+            "offer": "[variables('VM_Image_Offer')]",
+            "sku": "[variables('VM_Image_SKU')]",
+            "version": "[variables('VM_OS_Version')]"
+          },
+          "osDisk": {
+            "osType": "[variables('VM_Image_OSType')]",
+            "name": "[concat(variables('Tier2_FW_Name'), copyIndex(1), 'OSDisk')]",
+            "vhd": {
+              "uri": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts', variables('saFW_T2_Name')), '2016-01-01').primaryEndpoints.blob, variables('VHD_StorageAccount_Container_Name'), '/', variables('Tier2_FW_Name'), copyIndex(1), 'OSDisk', '.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          },
+          "dataDisks": []
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[concat(variables('Nic_PAN_FW_Tier2_ID'), copyIndex(1), '-Eth0')]",
+              "properties": {
+                "primary": true
+              }
+            },
+            {
+              "id": "[concat(variables('Nic_PAN_FW_Tier2_ID'), copyIndex(1), '-Eth1')]",
+              "properties": {
+                "primary": false
+              }
+            },
+            {
+              "id": "[concat(variables('Nic_PAN_FW_Tier2_ID'), copyIndex(1), '-Eth2')]",
+              "properties": {
+                "primary": false
+              }
+            }
+          ]
+        }
+
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[concat(variables('Tier3_FW_Name'), copyIndex(1))]",
+      "location": "[resourceGroup().Location]",
+      "apiVersion": "2016-04-30-preview",
+      "tags": {
+        "ManagementType": "Firewall",
+        "Environment": "Production",
+        "WorkLoad": "Security"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', variables('saFW_T3_Name'))]",
+        "[concat('Microsoft.Compute/availabilitySets/', variables('FW_T3_AvailabilitySet_Name'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('Nic_PAN_FW_Tier3_Prefix'), copyIndex(1), '-Eth0')]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('Nic_PAN_FW_Tier3_Prefix'), copyIndex(1), '-Eth1')]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('Nic_PAN_FW_Tier3_Prefix'), copyIndex(1), '-Eth2')]"
+      ],
+      "copy": {
+        "name": "[concat(parameters('PAN_FW_Name_Prefix_Tier3'), 'copyLoop')]",
+        "count": "[parameters('PAN_FW_Tier3_CopyLoop')]"
+      },
+      "plan": {
+        "name": "byol",
+        "product": "vmseries1",
+        "publisher": "paloaltonetworks"
+      },
+      "scale": null,
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('FW_T3_VM_Size')]"
+        },
+
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets',variables('FW_T3_AvailabilitySet_Name'))]"
+        },
+
+        "osProfile": {
+          "computerName": "[concat(variables('Tier3_FW_Name'), copyIndex(1))]",
+          "adminUsername": "[parameters('adminUserName')]",
+          "adminPassword": "[parameters('adminPassword')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": false
+          },
+          "secrets": []
+
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[variables('VM_Image_Publisher')]",
+            "offer": "[variables('VM_Image_Offer')]",
+            "sku": "[variables('VM_Image_SKU')]",
+            "version": "[variables('VM_OS_Version')]"
+          },
+          "osDisk": {
+            "osType": "[variables('VM_Image_OSType')]",
+            "name": "[concat(variables('Tier3_FW_Name'), copyIndex(1), 'OSDisk')]",
+            "vhd": {
+              "uri": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts', variables('saFW_T3_Name')), '2016-01-01').primaryEndpoints.blob, variables('VHD_StorageAccount_Container_Name'), '/', variables('Tier3_FW_Name'), copyIndex(1), 'OSDisk', '.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          },
+          "dataDisks": []
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[concat(variables('Nic_PAN_FW_Tier3_ID'), copyIndex(1), '-Eth0')]",
+              "properties": {
+                "primary": true
+              }
+            },
+            {
+              "id": "[concat(variables('Nic_PAN_FW_Tier3_ID'), copyIndex(1), '-Eth1')]",
+              "properties": {
+                "primary": false
+              }
+            },
+            {
+              "id": "[concat(variables('Nic_PAN_FW_Tier3_ID'), copyIndex(1), '-Eth2')]",
+              "properties": {
+                "primary": false
+              }
+            }
+          ]
+        }
+
+      }
+    },
+    {
+      "type": "Microsoft.Network/loadBalancers",
+      "name": "[variables('iLoadBalancer_T1_Name')]",
+      "apiVersion": "2017-03-01",
+      "tags": {
+        "ManagementType": "Firewall",
+        "Environment": "Production",
+        "WorkLoad": "Security"
+      },
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[variables('MainVNet_ID')]"
+      ],
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "[variables('iLoadBalancer_T1_Eth1_FrontEnd_Name')]",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[concat(variables('MainVNet_ID'),'/subnets/',variables('Subnet9Name'))]"
+              }
+            }
+          },
+          {
+            "name": "[variables('iLoadBalancer_T1_Eth2_FrontEnd_Name')]",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[concat(variables('MainVNet_ID'),'/subnets/',variables('Subnet8Name'))]"
+              }
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "[variables('iLoadBalancer_T1_Eth1_BackendPool_Name')]"
+          },
+          {
+            "name": "[variables('iLoadBalancer_T1_Eth2_BackendPool_Name')]"
+          }
+        ],
+        "loadBalancingRules": [
+          {
+            "name": "[variables('iLoadBalancer_T1_Eth1_Rule_Name')]",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('iLoadBalancer_T1_Eth1_FE_IPConfig_ID')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('iLoadBalancer_T1_Eth1_BackPool_ID')]"
+              },
+              "frontendPort": 443,
+              "backendPort": 443,
+              "enableFloatingIP": false,
+              "idleTimeoutInMinutes": 4,
+              "protocol": "Tcp",
+              "loadDistribution": "Default",
+              "probe": {
+                "id": "[variables('iLoadBalancer_T1_Eth1_Probe_ID')]"
+              }
+            }
+          },
+          {
+            "name": "[variables('iLoadBalancer_T1_Eth2_Rule_Name')]",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('iLoadBalancer_T1_Eth2_FE_IPConfig_ID')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('iLoadBalancer_T1_Eth2_BackPool_ID')]"
+              },
+              "frontendPort": 443,
+              "backendPort": 443,
+              "enableFloatingIP": false,
+              "idleTimeoutInMinutes": 4,
+              "protocol": "Tcp",
+              "loadDistribution": "Default",
+              "probe": {
+                "id": "[variables('iLoadBalancer_T1_Eth2_Probe_ID')]"
+              }
+            }
+          }
+        ],
+        "probes": [
+          {
+            "name": "[variables('iLoadBalancer_T1_Eth1_Probe_Name')]",
+            "properties": {
+              "protocol": "Tcp",
+              "port": 443,
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
+            }
+          },
+          {
+            "name": "[variables('iLoadBalancer_T1_Eth2_Probe_Name')]",
+            "properties": {
+              "protocol": "Tcp",
+              "port": 443,
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
+            }
+          }
+        ],
+        "inboundNatPools": [],
+        "outboundNatRules": [],
+        "inboundNatRules": []
+      }
+    },
+    {
+      "type": "Microsoft.Network/loadBalancers",
+      "name": "[variables('iLoadBalancer_T2_Name')]",
+      "apiVersion": "2017-03-01",
+      "tags": {
+        "ManagementType": "Firewall",
+        "Environment": "Production",
+        "WorkLoad": "Security"
+      },
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[variables('MainVNet_ID')]"
+      ],
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "[variables('iLoadBalancer_T2_Eth1_FrontEnd_Name')]",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[concat(variables('MainVNet_ID'),'/subnets/',variables('Subnet9Name'))]"
+              }
+            }
+          },
+          {
+            "name": "[variables('iLoadBalancer_T2_Eth2_FrontEnd_Name')]",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[concat(variables('MainVNet_ID'),'/subnets/',variables('Subnet7Name'))]"
+              }
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "[variables('iLoadBalancer_T2_Eth1_BackendPool_Name')]"
+          },
+          {
+            "name": "[variables('iLoadBalancer_T2_Eth2_BackendPool_Name')]"
+          }
+        ],
+        "loadBalancingRules": [
+          {
+            "name": "[variables('iLoadBalancer_T2_Eth1_Rule_Name')]",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('iLoadBalancer_T2_Eth1_FE_IPConfig_ID')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('iLoadBalancer_T2_Eth1_BackPool_ID')]"
+              },
+              "frontendPort": 443,
+              "backendPort": 443,
+              "enableFloatingIP": false,
+              "idleTimeoutInMinutes": 4,
+              "protocol": "Tcp",
+              "loadDistribution": "Default",
+              "probe": {
+                "id": "[variables('iLoadBalancer_T2_Eth1_Probe_ID')]"
+              }
+            }
+          },
+          {
+            "name": "[variables('iLoadBalancer_T2_Eth2_Rule_Name')]",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('iLoadBalancer_T2_Eth2_FE_IPConfig_ID')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('iLoadBalancer_T2_Eth2_BackPool_ID')]"
+              },
+              "frontendPort": 443,
+              "backendPort": 443,
+              "enableFloatingIP": false,
+              "idleTimeoutInMinutes": 4,
+              "protocol": "Tcp",
+              "loadDistribution": "Default",
+              "probe": {
+                "id": "[variables('iLoadBalancer_T2_Eth2_Probe_ID')]"
+              }
+            }
+          }
+        ],
+        "probes": [
+          {
+            "name": "[variables('iLoadBalancer_T2_Eth1_Probe_Name')]",
+            "properties": {
+              "protocol": "Tcp",
+              "port": 443,
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
+            }
+          },
+          {
+            "name": "[variables('iLoadBalancer_T2_Eth2_Probe_Name')]",
+            "properties": {
+              "protocol": "Tcp",
+              "port": 443,
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
+            }
+          }
+        ],
+        "inboundNatPools": [],
+        "outboundNatRules": [],
+        "inboundNatRules": []
+      }
+    },
+    {
+      "type": "Microsoft.Network/loadBalancers",
+      "name": "[variables('iLoadBalancer_T3_Name')]",
+      "apiVersion": "2017-03-01",
+      "tags": {
+        "ManagementType": "Firewall",
+        "Environment": "Production",
+        "WorkLoad": "Security"
+      },
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[variables('MainVNet_ID')]"
+      ],
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "[variables('iLoadBalancer_T3_Eth1_FrontEnd_Name')]",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[concat(variables('MainVNet_ID'),'/subnets/',variables('Subnet9Name'))]"
+              }
+            }
+          },
+          {
+            "name": "[variables('iLoadBalancer_T3_Eth2_FrontEnd_Name')]",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[concat(variables('MainVNet_ID'),'/subnets/',variables('Subnet6Name'))]"
+              }
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "[variables('iLoadBalancer_T3_Eth1_BackendPool_Name')]"
+          },
+          {
+            "name": "[variables('iLoadBalancer_T3_Eth2_BackendPool_Name')]"
+          }
+        ],
+        "loadBalancingRules": [
+          {
+            "name": "[variables('iLoadBalancer_T3_Eth1_Rule_Name')]",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('iLoadBalancer_T3_Eth1_FE_IPConfig_ID')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('iLoadBalancer_T3_Eth1_BackPool_ID')]"
+              },
+              "frontendPort": 443,
+              "backendPort": 443,
+              "enableFloatingIP": false,
+              "idleTimeoutInMinutes": 4,
+              "protocol": "Tcp",
+              "loadDistribution": "Default",
+              "probe": {
+                "id": "[variables('iLoadBalancer_T3_Eth1_Probe_ID')]"
+              }
+            }
+          },
+          {
+            "name": "[variables('iLoadBalancer_T3_Eth2_Rule_Name')]",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[variables('iLoadBalancer_T3_Eth2_FE_IPConfig_ID')]"
+              },
+              "backendAddressPool": {
+                "id": "[variables('iLoadBalancer_T3_Eth2_BackPool_ID')]"
+              },
+              "frontendPort": 443,
+              "backendPort": 443,
+              "enableFloatingIP": false,
+              "idleTimeoutInMinutes": 4,
+              "protocol": "Tcp",
+              "loadDistribution": "Default",
+              "probe": {
+                "id": "[variables('iLoadBalancer_T3_Eth2_Probe_ID')]"
+              }
+            }
+          }
+        ],
+        "probes": [
+          {
+            "name": "[variables('iLoadBalancer_T3_Eth1_Probe_Name')]",
+            "properties": {
+              "protocol": "Tcp",
+              "port": 443,
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
+            }
+          },
+          {
+            "name": "[variables('iLoadBalancer_T3_Eth2_Probe_Name')]",
+            "properties": {
+              "protocol": "Tcp",
+              "port": 443,
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
+            }
+          }
+        ],
+        "inboundNatPools": [],
+        "outboundNatRules": [],
+        "inboundNatRules": []
+      }
+    }
+  ],
+
+
+
+
+
+      "outputs": {}
+    }
